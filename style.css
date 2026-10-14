@@ -1,0 +1,2059 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* --- NEO-SWISS BLUEPRINT VARIABLES --- */
+:root {
+    /* Colors - Structural */
+    --surface-bg: #FFFFFF;
+    --surface-card: #FFFFFF;
+    --surface-hover: #000000;
+    /* Inverted for high contrast hover */
+    --surface-header: #FFFFFF;
+
+    /* Colors - Grid & UI */
+    --grid-border: #E5E5E5;
+    /* 1px Solid Light Grey */
+    --ui-text-primary: #000000;
+    --ui-text-secondary: #000000;
+    /* Utilities are also stark black */
+    --ui-accent: #0000FF;
+    /* International Klein Blue or purely digital Blue */
+    --ui-danger: #FF0000;
+    /* Pure Red */
+
+    /* Colors - Data (Technical Palette) */
+    --color-green: #95D5B2;
+    --color-farm: #D6CAB2;
+    --color-sport: #A0CED9;
+    --color-workshop: #FFCB77;
+    --color-void: #EEEEEE;
+
+    /* Typography */
+    --font-header: 'Inter Tight', Helvetica, Arial, sans-serif;
+    --font-data: 'Space Mono', monospace;
+
+    /* Spacing & Layout */
+    --header-height: 48px;
+    --sidebar-width: 280px;
+    /* Slightly wider for data readability */
+    --gap-md: 0px;
+    /* NO GAPS between grid cells */
+    --gap-sm: 0px;
+
+    /* Effects */
+    --shadow-card: none;
+    /* Flat architectural style */
+    --shadow-float: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    /* Brutalist hard shadow */
+    --radius-md: 0px;
+    /* Sharp corners */
+    --radius-sm: 0px;
+}
+
+body.dark-mode {
+    --surface-bg: #000000;
+    --surface-card: #000000;
+    --surface-hover: #FFFFFF;
+    --surface-header: #000000;
+
+    --grid-border: #333333;
+    --ui-text-primary: #FFFFFF;
+    --ui-text-secondary: #AAAAAA;
+    --ui-accent: #0000FF;
+}
+
+/* Global Reset & Typography */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-header);
+    /* Default to header font for strictness, specific elements will get data font */
+    font-size: 13px;
+    background-color: var(--surface-bg);
+    margin: 0;
+    color: var(--ui-text-primary);
+    height: 100vh;
+    overflow: hidden;
+    text-transform: uppercase;
+    /* Blueprint style default */
+    /* Blueprint style default */
+    letter-spacing: 0.5px;
+    cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2l0 18l4-4l4 7l3-2l-4-7l6-1l-13-11z' fill='%23000' stroke='%23FFF' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 2, default;
+}
+
+body.dark-mode {
+    /* Same high-contrast cursor works for dark mode too */
+    cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2l0 18l4-4l4 7l3-2l-4-7l6-1l-13-11z' fill='%23000' stroke='%23FFF' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 2, default;
+}
+
+/* --- APP STRUCTURE --- */
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border: 1px solid var(--grid-border);
+}
+
+
+/* TOPBAR */
+.app-topbar {
+    height: var(--header-height);
+    background: var(--surface-header);
+    border-bottom: 1px solid var(--grid-border);
+    display: flex;
+    /* RESTORED VISIBILITY */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+    z-index: 3000 !important;
+    box-shadow: none;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 20px;
+    height: 20px;
+    background: var(--ui-accent);
+    border-radius: 4px;
+}
+
+.brand h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ui-text-primary);
+}
+
+.topbar-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.status-label {
+    font-size: 0.7rem;
+    color: var(--ui-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-value {
+    font-size: 1.2rem;
+    font-family: var(--font-data);
+    font-weight: 700;
+    color: var(--ui-text-primary);
+}
+
+.topbar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+    /* Push to right */
+    position: relative;
+    z-index: 5000;
+    /* Ensure above everything */
+    padding-right: 12px;
+}
+
+/* MAIN BODY */
+.app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: var(--gap-md);
+    gap: var(--gap-md);
+}
+
+/* SIDEBARS */
+.sidebar-left,
+.sidebar-right {
+    width: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding-bottom: 20px;
+}
+
+.sidebar-left::-webkit-scrollbar,
+.sidebar-right::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-left::-webkit-scrollbar-thumb,
+.sidebar-right::-webkit-scrollbar-thumb {
+    background: #CBD5E0;
+    border-radius: 2px;
+}
+
+/* TAB BAR */
+.tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 0 4px;
+    position: relative;
+    /* Context for indicator */
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    /* border-bottom: 2px solid transparent; REMOVED for sliding indicator */
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ui-text-secondary);
+    cursor: pointer;
+    transition: color 0.2s;
+    /* Only text color transitions now */
+}
+
+.tab-btn:hover {
+    color: var(--ui-text-primary);
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px 4px 0 0;
+}
+
+.tab-btn.active {
+    color: var(--ui-accent);
+    /* border-bottom-color: var(--ui-accent); REMOVED */
+}
+
+.tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background-color: var(--ui-accent);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    /* Smooth sliding physics */
+    width: 0;
+    /* Set by JS */
+}
+
+body.dark-mode .tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* --- MICRO-INTERACTIONS: BREATHING ICONS --- */
+/* Sun (Shadows) - Rotate */
+#toggleShadowsBtn svg {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#toggleShadowsBtn:hover svg {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Layers (Heatmap) - Separate Layers */
+#toggleHeatmapBtn svg {
+    transition: transform 0.3s ease;
+}
+
+#toggleHeatmapBtn:hover svg polygon {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#toggleHeatmapBtn:hover svg polygon:first-child {
+    transform: translateY(-2px);
+    /* Lift top layer */
+}
+
+/* Cube (Objects) - Lift */
+#toggleObjectsBtn svg {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#toggleObjectsBtn:hover svg {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Pixel (Grid) - Scale */
+#togglePixelBtn svg rect {
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+#togglePixelBtn:hover svg rect:nth-child(odd) {
+    transform: scale(0.8);
+}
+
+#togglePixelBtn:hover svg rect:nth-child(even) {
+    transform: scale(1.2);
+}
+
+/* Scores (Bar Chart) - Growth */
+#toggleScoresBtn svg path {
+    transition: d 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: bottom;
+}
+
+#toggleScoresBtn:hover svg path {
+    transform: scaleY(1.2);
+}
+
+
+/* --- MICRO-INTERACTIONS: MAGNETIC MENUS --- */
+.settings-menu {
+    /* Override standard transition */
+    transform-origin: top right;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.settings-menu.visible {
+    transform: translateY(0) scale(1);
+}
+
+/* --- MICRO-INTERACTIONS: MAGNETIC ACCORDIONS --- */
+/* Enhance Config Sections */
+details.config-section .section-content {
+    /* Grid Trick for smooth height animation requires wrapping content in a div */
+    /* But current HTML structure is details > summary + div.section-content */
+    /* So we animate the div.section-content */
+    /* We need to use max-height or grid. */
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Springy expansion */
+}
+
+/* Note: Pure CSS Accordion animation on <details> without JS is tricky because 'open' attribute changes display.
+       Standard approach: Use Keyframes on open? Or just enhance the feel. 
+       Let's use a simple animation on open.
+    */
+
+details[open] .section-content {
+    animation: accordion-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes accordion-open {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* CANVAS CONTAINER */
+.canvas-container {
+    flex: 1;
+    background: #E2E8F0;
+    /* Darker backdrop for canvas */
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    /* Needed for absolute positioning of progress bar */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-items: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* --- VIEW MODE TRANSITIONS --- */
+.canvas-controls-left,
+.reset-view-btn {
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* When Analytics View is Active: Fade out controls */
+.canvas-container.view-analytics .canvas-controls-left,
+.canvas-container.view-analytics .reset-view-btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
+    /* Slight downward movement */
+}
+
+body.dark-mode .canvas-container {
+    background: #171923;
+    /* Very dark slate/blue for contrast with grid */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* DARK MODE OVERRIDES */
+body.dark-mode .canvas-overlay-btn {
+    background: #2D3748;
+    color: #E2E8F0;
+    border-color: #4A5568;
+}
+
+body.dark-mode .canvas-overlay-btn:hover {
+    background: #4A5568;
+    color: #F7FAFC;
+}
+
+body.dark-mode .settings-menu {
+    background: #2D3748;
+    color: #E2E8F0;
+    border-color: #4A5568;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .kpi-card {
+    background: #1F2937;
+    /* Darker card bg */
+    border-color: #374151;
+}
+
+body.dark-mode .kpi-value {
+    color: #F7FAFC;
+}
+
+body.dark-mode .kpi-label {
+    color: #A0AEC0;
+}
+
+/* Stat Pills in Dark Mode */
+body.dark-mode .stat-pill {
+    background: #1A202C;
+    /* Very Dark Background */
+    border-color: #4A5568;
+    /* Subtle border */
+}
+
+body.dark-mode .stat-pill .value {
+    color: #F7FAFC !important;
+    /* Force White Text */
+}
+
+body.dark-mode .stat-pill .label {
+    color: #A0AEC0 !important;
+    /* Lighter Gray Label */
+}
+
+/* Specific Pill Border Accents for identification (optional but good) */
+body.dark-mode .stat-pill.green {
+    border-color: #38A169;
+}
+
+body.dark-mode .stat-pill.farm {
+    border-color: #D69E2E;
+}
+
+body.dark-mode .stat-pill.sport {
+    border-color: #3182CE;
+}
+
+body.dark-mode .stat-pill.workshop {
+    border-color: #DD6B20;
+}
+
+body.dark-mode .stat-pill.void {
+    border-color: #718096;
+}
+
+.canvas-wrapper {
+    position: relative;
+    /* Removed card styling for floating effect */
+    background: transparent;
+    box-shadow: none;
+    z-index: 1;
+    /* Ensure canvas is above background but below potential overlays if needed */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+}
+
+/* Fix for Analytics View Vertical Alignment */
+#graph-view {
+    align-items: start;
+    /* Align content to top */
+    overflow-y: auto;
+    /* Allow scrolling if content overflows */
+}
+
+/* ... */
+#progress-bar-container {
+    height: 8px;
+    /* Slightly thicker for visibility at bottom */
+    background: #EDF2F7;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* CARDS */
+.card {
+    background: var(--surface-card);
+    border: 1px solid var(--grid-border);
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.card-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--grid-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background: var(--surface-bg);
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ui-text-primary);
+}
+
+.shortcut-hint {
+    font-size: 0.7rem;
+    color: var(--ui-text-secondary);
+}
+
+.card-body {
+    padding: 12px;
+    font-size: 0.9rem;
+}
+
+/* CONTROLS */
+.btn-action {
+    background: var(--ui-accent);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-size: 0.9rem;
+}
+
+.btn-action:hover {
+    background: var(--ui-accent-hover);
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    /* Reduced from 16px to bring closer */
+}
+
+.btn-icon {
+    flex: 1;
+    background: #EDF2F7;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--ui-text-primary);
+}
+
+.btn-icon:hover {
+    background: #E2E8F0;
+}
+
+.btn-icon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-icon.danger:hover {
+    background: #FED7D7;
+    color: #9B2C2C;
+}
+
+.btn-secondary {
+    background: white;
+    border: 1px solid var(--ui-border);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--ui-text-secondary);
+}
+
+.btn-secondary:hover {
+    background: #F7FAFC;
+    color: var(--ui-text-primary);
+    border-color: #CBD5E0;
+}
+
+body.dark-mode .btn-secondary {
+    background: #4A5568;
+    border-color: #718096;
+    color: #F7FAFC;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #2D3748;
+}
+
+body.dark-mode .btn-icon {
+    background: #4A5568;
+    border-color: #718096;
+    color: #F7FAFC;
+}
+
+body.dark-mode .btn-icon:hover {
+    background: #2D3748;
+}
+
+/* PALETTE */
+.palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.palette-button {
+    width: 32px !important;
+    height: 32px !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin: 0 auto;
+}
+
+.palette-button.active {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--ui-accent);
+    border-color: transparent !important;
+}
+
+/* SLIDERS & PARAMS */
+.param-group {
+    margin-bottom: 28px;
+}
+
+.param-group:last-child {
+    margin-bottom: 0;
+}
+
+.param-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.param-header label {
+    font-size: 0.8rem;
+    color: var(--ui-text-secondary);
+    font-weight: 500;
+}
+
+.param-header span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ui-text-primary);
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #CBD5E0;
+    border-radius: 2px;
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--ui-accent);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--ui-text-secondary);
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    margin-top: 4px;
+}
+
+.separator {
+    height: 1px;
+    background: var(--ui-border);
+    margin: 16px 0;
+}
+
+/* STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.stat-pill {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: #1A202C !important;
+    /* Always dark text for pastel pills */
+}
+
+/* Force dark text for values inside stat pills, even in dark mode */
+.stat-pill .value {
+    color: #1A202C !important;
+}
+
+.stat-pill .label {
+    color: #4A5568 !important;
+    /* Dark Gray for labels */
+}
+
+.stat-pill.green {
+    background: #F0FFF4;
+    border: 1px solid #C6F6D5;
+}
+
+.stat-pill.farm {
+    background: #FFFFF0;
+    border: 1px solid #FEFCBF;
+}
+
+.stat-pill.sport {
+    background: #FFF5F5;
+    border: 1px solid #FED7D7;
+}
+
+.stat-pill.workshop {
+    background: #FFFAF0;
+    border: 1px solid #FEEBC8;
+}
+
+.stat-pill.void {
+    background: #F7FAFC;
+    border: 1px solid #EDF2F7;
+}
+
+.stat-pill .label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--ui-text-secondary);
+    text-transform: uppercase;
+}
+
+.stat-pill .value {
+    font-size: 1rem;
+    font-family: var(--font-data);
+    font-weight: 700;
+    color: var(--ui-text-primary);
+}
+
+/* UTILS */
+.toggle-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.toggle-label {
+    font-size: 0.9rem;
+    color: var(--ui-text-primary);
+}
+
+.info-card .card-body {
+    background: #2D3748;
+    color: #48BB78;
+    font-family: monospace;
+    padding: 12px;
+}
+
+#progress-bar {
+    height: 100%;
+    background: var(--ui-accent);
+    width: 0%;
+    transition: width 0.2s;
+}
+
+.dual-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.file-input {
+    width: 100%;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+}
+
+#info-display {
+    min-height: 2.8em;
+    /* Force 2 lines of text height */
+    max-height: 2.8em;
+    overflow: hidden;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* System Log Text Color in Dark Mode - Ensure contrast if green is too dark, but green usually pops on black.
+   Actually, the user said "system log... not very legible".
+   Currently #info-display is likely default text color or specific green.
+   Let's check index.html for inline styles or script.js for interactions.
+   "System ready." in log is often set via JS.
+   If it's just standard text, it inherits.
+   Let's ensure the card body has right color.
+*/
+body.dark-mode #info-display {
+    color: #9AE6B4;
+    /* Light Green for dark mode readability */
+}
+
+/* FLOATING TOOLTIP */
+.reset-view-btn {
+    z-index: 50 !important;
+    /* Ensure below Topbar (3000) */
+}
+
+.floating-tooltip {
+    position: fixed;
+    background-color: var(--surface-card);
+    color: var(--ui-text-primary);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    border: 1px solid var(--ui-border);
+    max-width: 300px;
+    line-height: 1.5;
+    pointer-events: none;
+    /* Ensure it never captures mouse */
+}
+
+.floating-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* DASHBOARD LAYOUT - GRID SYSTEM */
+.analytics-dashboard {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    /* 8 Columns */
+    grid-template-rows: repeat(5, 120px);
+    /* 5 Rows of fixed height */
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    /* Constrain width */
+    margin: 0 auto;
+    padding: 0 16px;
+    /* FIXED: Added horizontal padding */
+
+    /* --- MICRO-INTERACTIONS --- */
+
+    /* Glitch Effect */
+    .blueprint-cell {
+        transition: none !important;
+    }
+
+    .blueprint-cell:hover {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+    }
+
+    .blueprint-cell:hover * {
+        color: #FFFFFF !important;
+        border-color: #FFFFFF !important;
+    }
+
+    /* Marquee */
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        background: #000000;
+        color: #FFFFFF;
+        border-bottom: 1px solid var(--grid-border);
+        white-space: nowrap;
+        box-sizing: border-box;
+        font-family: var(--font-data);
+        font-size: 12px;
+        padding: 4px 0;
+        text-transform: uppercase;
+    }
+
+    .marquee-content {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee 20s linear infinite;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(-100%, 0);
+        }
+    }
+
+
+    /* KPI CARDS DEFAULT STYLING */
+    .kpi-card {
+        background: #FFFFFF;
+        border-radius: 0;
+        padding: 16px 20px;
+        box-shadow: none;
+        border: 1px solid var(--grid-border);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        /* FIXED: Align to top */
+        transition: transform 0.2s;
+        min-width: 0;
+        /* Prevent overflow */
+    }
+
+    .kpi-card:hover {
+        transform: none;
+        box-shadow: none;
+        /* Or keep static shadow if preferred: box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); */
+        border-color: #000;
+        /* Optional: just highlight border */
+    }
+
+    .kpi-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        color: #718096;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: var(--font-data);
+    }
+
+    .kpi-value {
+        font-size: 1.75rem;
+        font-family: var(--font-data);
+        font-weight: 700;
+        color: var(--ui-text-primary);
+        line-height: 1.2;
+    }
+
+    .kpi-sub {
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    .kpi-value.highlight {
+        color: var(--ui-accent);
+    }
+
+    /* --- GRID PLACEMENT --- */
+
+    /* TOP ROW (Rectangular, 4 cards spanning 2 cols each) */
+    #card-year {
+        grid-column: span 2;
+        grid-row: 1;
+    }
+
+    #card-trees {
+        grid-column: span 2;
+        grid-row: 1;
+    }
+
+    #card-paved {
+        grid-column: span 2;
+        grid-row: 1;
+    }
+
+    #card-bio {
+        grid-column: span 2;
+        grid-row: 1;
+    }
+
+    /* GRAPH AREA (Big block on left) */
+    #card-graph {
+        grid-column: span 4;
+        grid-row: span 4;
+        /* Spans 4 rows as requested */
+        width: 100% !important;
+        /* Override flex width */
+        height: 100%;
+    }
+
+    /* SQUARED CARDS (Tall, spanning 2 rows, 1 col) */
+    .kpi-card.square {
+        grid-column: span 1;
+        grid-row: span 2;
+        /* Tall */
+        /* FIXED: Alignment logic */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        /* Title to the left */
+        justify-content: flex-start;
+        /* Start from top */
+        padding: 16px 20px;
+        /* Match standard card padding */
+    }
+
+    .kpi-card.square .kpi-label {
+        margin-bottom: 0;
+        /* Reset bottom margin */
+        font-size: 0.75rem;
+        white-space: normal;
+        /* Allowed to wrap */
+        text-align: left;
+        width: 100%;
+        /* Ensure it takes full width */
+    }
+
+    .kpi-card.square .kpi-value {
+        font-size: 2.0rem;
+        /* BIG number */
+        margin-top: 8px;
+        /* Fixed spacing from top */
+        /* Center vertically in the remaining space */
+        align-self: flex-start;
+        /* Left align */
+        /* Center horizontally in the flex container */
+    }
+
+    /* SPECIFIC PLACEMENT FOR SQUARES */
+    #card-age {
+        grid-column: 5;
+        /* 5th column */
+        grid-row: 2 / span 2;
+        /* Starts at row 2, spans 2 */
+    }
+
+    #card-doors {
+        grid-column: 5;
+        /* 5th column (Under Age) */
+        grid-row: 4 / span 2;
+        /* Starts at Row 4, Spans 2 */
+    }
+
+    #card-diversity {
+        grid-column: 6;
+        /* 6th column */
+        grid-row: 2 / span 2;
+        /* Starts at row 2, spans 2 */
+    }
+
+    /* MERGED CARD (Rectangular, row 2) */
+    #card-merged {
+        grid-column: 7 / span 2;
+        /* Cols 7-8 */
+        grid-row: 2;
+        /* Row 2 */
+        display: flex;
+        justify-content: center;
+        /* Center vertical content */
+    }
+
+    /* TOTAL PLANTED (Col 6, Rows 3-5, same height as Participating Plots) */
+    #card-total-planted {
+        grid-column: 6;
+        grid-row: 3 / span 3;
+    }
+
+    /* PARTICIPATING PLOTS (Cols 7-8, Rows 3-5, below Merged) */
+    #card-participating {
+        grid-column: 7 / span 2;
+        grid-row: 3 / span 3;
+    }
+
+    /* GRAPH CONTAINER STYLING override */
+    .graph-container-inner {
+        flex-grow: 1;
+        /* Allow it to grow */
+        width: 100%;
+        height: 100%;
+        /* Fill parent */
+        align-self: stretch;
+        background: #FFFFFF;
+        border-radius: 0;
+        box-shadow: none;
+        /* Removed shadow inside card */
+        border: none;
+        /* Removed border inside card */
+        padding: 0;
+        /* REMOVED PADDING entirely for max size */
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        /* Stretch children */
+        justify-content: flex-start;
+        /* transition: none; REMOVED ANIMATION */
+    }
+
+    .graph-container-inner:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    .graph-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .legend-hint {
+        font-size: 0.75rem;
+        color: #A0AEC0;
+        font-weight: 500;
+    }
+
+    #graphCanvas {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        flex-grow: 1;
+    }
+
+    /* DARK MODE OVERRIDES */
+    body.dark-mode .kpi-card,
+    body.dark-mode .graph-container-inner {
+        background: #2D3748;
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .kpi-label {
+        color: #A0AEC0;
+    }
+
+    body.dark-mode .kpi-value {
+        color: #F7FAFC;
+    }
+
+    body.dark-mode .graph-header h3 {
+        color: #E2E8F0;
+    }
+
+    /* Fixed Stat Pills in Dark Mode - INCREASED SPECIFICITY */
+    body.dark-mode .card-body.stats-grid .stat-pill.green {
+        background: #1C4532 !important;
+        border-color: #2F855A !important;
+    }
+
+    body.dark-mode .card-body.stats-grid .stat-pill.farm {
+        background: #443310 !important;
+        border-color: #B7791F !important;
+    }
+
+    body.dark-mode .card-body.stats-grid .stat-pill.sport {
+        background: #2A4365 !important;
+        border-color: #4299E1 !important;
+    }
+
+    body.dark-mode .card-body.stats-grid .stat-pill.workshop {
+        background: #7B341E !important;
+        border-color: #C05621 !important;
+    }
+
+    body.dark-mode .card-body.stats-grid .stat-pill.void {
+        background: #2D3748 !important;
+        border-color: #4A5568 !important;
+    }
+
+    /* Force correct text color in dark mode pills - TARGET SPANS DIRECTLY */
+    body.dark-mode .stat-pill span.value,
+    body.dark-mode .stat-pill span.label {
+        color: #FFFFFF !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        /* Boost readability */
+    }
+
+    body.dark-mode .stat-pill span.label {
+        color: #E2E8F0 !important;
+        opacity: 0.9;
+    }
+
+    /* Analytics Dashboard Fixes */
+    /* Ensure the container behind the dashboard is dark */
+    body.dark-mode .canvas-container {
+        background: #171923 !important;
+    }
+
+    /* Ensure the dashboard grid itself is transparent so it shows the container */
+    body.dark-mode .analytics-dashboard {
+        background: transparent !important;
+    }
+
+    /* Wrapper needs to be transparent too */
+    body.dark-mode .canvas-wrapper {
+        background: transparent !important;
+    }
+
+    /* Graph Card Fixes - The "Composition Timeline" Box */
+    body.dark-mode .graph-container-inner {
+        background: #1F2937 !important;
+        border: 1px solid #374151 !important;
+        /* Restore border for definition */
+    }
+
+    /* Fix text inside graph container */
+    body.dark-mode .graph-header .kpi-label,
+    body.dark-mode .graph-header .legend-hint {
+        color: #E2E8F0 !important;
+    }
+
+    /* Sub-labels in KPI cards */
+    body.dark-mode .kpi-sub {
+        opacity: 0.9;
+        color: #E2E8F0 !important;
+    }
+
+    @media (max-width: 1400px) {
+        .analytics-dashboard {
+            grid-template-columns: repeat(4, 1fr);
+            /* Fallback to 4 cols on smaller screens */
+        }
+
+        #card-graph {
+            grid-column: span 4;
+            grid-row: auto;
+            height: 400px;
+        }
+
+        .kpi-card.square {
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+
+        #card-age,
+        #card-diversity {
+            grid-column: auto;
+            grid-row: auto;
+        }
+
+        #card-total-planted,
+        #card-participating {
+            grid-column: auto;
+            grid-row: auto;
+        }
+    }
+
+    /* CONFIGURATION ACCORDION SETTINGS */
+    /* Accordion Animation (Grid Method) */
+    .config-section {
+        border-bottom: 1px solid var(--ui-border);
+        margin-bottom: 0;
+    }
+
+    .config-section:last-child {
+        border-bottom: none;
+    }
+
+    .config-section summary {
+        padding: 12px 4px 12px 4px;
+        /* Reduced bottom padding */
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--ui-text-secondary);
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        cursor: pointer;
+        list-style: none;
+        margin-bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: color 0.2s, background-color 0.2s;
+        border-bottom: 1px solid transparent;
+        position: relative;
+        z-index: 10;
+        background: var(--surface-bg);
+        /* Ensure summary sits on top */
+    }
+
+    .config-section summary:hover {
+        color: var(--ui-text-primary);
+        background-color: var(--surface-hover);
+    }
+
+    .config-section summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .config-section summary::after {
+        content: '›';
+        font-size: 1.2rem;
+        font-weight: 400;
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        margin-right: 8px;
+        line-height: 0.8;
+    }
+
+    .config-section[open] summary::after {
+        transform: rotate(90deg);
+    }
+
+    /* The Content Wrapper (Grid Trick) */
+    /* Target the div immediately following the summary */
+    /* Accordion Content - JS Driven Animation Support */
+    .config-section .section-content {
+        display: block;
+        /* Default display value when open */
+        overflow: hidden;
+        transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity 0.4s ease,
+            padding 0.4s ease;
+        /* Initial state logic is handled by JS toggling display/height */
+    }
+
+    /* We remove the grid-template-rows hack as we are now using robust JS height calculation */
+
+
+
+    /* Canvas Overlay Buttons (View Toggles) */
+    /* HIGHEST SPECIFICITY OVERRIDE */
+    /* Canvas Overlay Buttons (View Toggles) */
+    /* HIGHEST SPECIFICITY OVERRIDE */
+    #blueprint-toolbar button,
+    #resetViewBtn,
+    .canvas-overlay-btn {
+        width: 34px !important;
+        /* Reduced from 42px */
+        height: 34px !important;
+        /* Reduced from 42px */
+        background: #FFFFFF !important;
+        border: 1px solid var(--grid-border) !important;
+        border-radius: 0px !important;
+        /* FORCE SQUARE */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: var(--ui-text-secondary) !important;
+        cursor: pointer !important;
+        transition: none !important;
+        margin-right: -1px !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        /* Reset any padding */
+    }
+
+    /* Hover State */
+    #blueprint-toolbar button:hover,
+    #resetViewBtn:hover,
+    .canvas-overlay-btn:hover {
+        background: #000000 !important;
+        color: #FFFFFF !important;
+        border-color: #000000 !important;
+        transform: none !important;
+    }
+
+    #blueprint-toolbar button svg,
+    .canvas-overlay-btn svg {
+        stroke-width: 1.5;
+    }
+
+    /* Active State */
+    #blueprint-toolbar button.active,
+    #blueprint-toolbar button[data-active="true"],
+    .canvas-overlay-btn.active {
+        background: #000000 !important;
+        color: #FFFFFF !important;
+        border-color: #000000 !important;
+    }
+
+    /* Ensure Icon inherits color in active state */
+    #blueprint-toolbar button.active svg,
+    .canvas-overlay-btn.active svg {
+        stroke: #FFFFFF !important;
+    }
+
+    /* Fix Start Button Hover Readability */
+    /* If the button turns white on hover, it likely needs a dark text color or dark background */
+    .blueprint-cell:hover {
+        background: #000000 !important;
+        color: #FFFFFF !important;
+        /* Ensure text is white on black background */
+    }
+
+    /* Specific override for the Start Simulation button if it differs */
+    /* Specific override for the Start Simulation button if it differs */
+    #mode-toggle:hover {
+        background: #FFFFFF !important;
+        /* Force White background */
+        color: #000000 !important;
+        /* Force Black text */
+        border: 1px solid #000000 !important;
+    }
+
+    /* Ensure SVG icons inside Start Button turn white on hover */
+    /* Ensure SVG icons inside Start Button turn BLACK on hover */
+    #mode-toggle:hover svg {
+        fill: #000000 !important;
+        stroke: #000000 !important;
+    }
+
+    /* Other blueprint cells retain white-on-black behavior */
+    .blueprint-cell:hover svg {
+        fill: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
+    /* --- REWRITTEN LAYOUT & VISIBILITY (USER COLOR MATCH) --- */
+    /* Toolbar Button Transparency Fix */
+    /* Target Specific IDs to ensure override */
+    #darkModeToggle,
+    #saveLayout,
+    #loadLayoutBtn,
+    #exportBtn,
+    #settingsBtn,
+    .topbar-actions .btn-secondary {
+        background-color: transparent !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        color: inherit !important;
+    }
+
+    /* Keep icons visible in dark/light mode */
+    body.dark-mode .topbar-actions .btn-secondary,
+    body.dark-mode #darkModeToggle,
+    body.dark-mode #saveLayout,
+    body.dark-mode #loadLayoutBtn,
+    body.dark-mode #exportBtn,
+    body.dark-mode #settingsBtn {
+        color: #E2E8F0 !important;
+    }
+
+    body:not(.dark-mode) .topbar-actions .btn-secondary,
+    body:not(.dark-mode) #darkModeToggle,
+    body:not(.dark-mode) #saveLayout,
+    body:not(.dark-mode) #loadLayoutBtn,
+    body:not(.dark-mode) #exportBtn,
+    body:not(.dark-mode) #settingsBtn {
+        color: #2D3748 !important;
+    }
+
+    /* Restore background and border on Hover */
+    #darkModeToggle:hover,
+    #saveLayout:hover,
+    #loadLayoutBtn:hover,
+    #exportBtn:hover,
+    #settingsBtn:hover,
+    .topbar-actions .btn-secondary:hover {
+        background-color: var(--surface-bg) !important;
+        /* Use standard surface color */
+        border: 1px solid var(--border-color) !important;
+        opacity: 1 !important;
+    }
+
+    /* Ensure icons inside inherit color */
+    .topbar-actions .btn-secondary svg,
+    .topbar-actions .btn-secondary *,
+    #exportBtn svg,
+    #settingsBtn svg {
+        color: inherit !important;
+        stroke: currentColor !important;
+        fill: none !important;
+        /* Prevent fill overlap */
+    }
+
+    /* Active State (e.g. open menu) */
+    .btn-secondary:active,
+    .btn-secondary.active {
+        background-color: var(--surface-bg) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+    /* 1. TOP BAR VISIBILITY */
+    .app-topbar {
+        position: relative !important;
+        display: flex !important;
+    }
+
+    .topbar-actions {
+        position: absolute !important;
+        right: 24px !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        z-index: 9999 !important;
+    }
+
+    /* 2. ANALYTICS GRID */
+    .analytics-dashboard {
+        display: grid !important;
+        grid-template-columns: repeat(8, 1fr) !important;
+        grid-auto-rows: 140px !important;
+        gap: 16px !important;
+        padding: 24px !important;
+        max-width: 1800px;
+        margin: 0 auto;
+    }
+
+    /* Row 1: Metrics */
+    #card-year,
+    #card-trees,
+    #card-paved,
+    #card-bio {
+        grid-column: span 2 !important;
+        grid-row: 1 !important;
+    }
+
+    /* Row 2+3 Left: Graph */
+    #card-graph {
+        grid-column: 1 / span 4 !important;
+        grid-row: 2 / span 2 !important;
+        height: 100% !important;
+        /* Balanced padding: Less on top (Header), More on bottom (Axis labels) */
+        padding: 8px 16px 16px 16px !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #card-graph .graph-container-inner {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    #card-graph canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* SQUARES PLACEMENT (Based on Color Diagram - UPDATED REQUEST) */
+
+    /* Red (Top Left): Avg Age -> Make Square (Span 1) */
+    #card-age {
+        grid-column: 5 / span 1 !important;
+        grid-row: 2 !important;
+    }
+
+    /* Green (Top Right): Diversity -> Make Square (Span 1) and Move Next to Age (Col 6) */
+    #card-diversity {
+        grid-column: 6 / span 1 !important;
+        grid-row: 2 !important;
+    }
+
+    /* Blue (Bottom Right): Merged -> Move UP to Row 2, Right of Diversity */
+    #card-merged {
+        grid-column: 7 / span 2 !important;
+        grid-row: 2 !important;
+    }
+
+    /* Yellow (Bottom Left): Door Count -> Make Square (Span 1) and keep at Row 3, Col 5 */
+    #card-doors {
+        grid-column: 5 / span 1 !important;
+        grid-row: 3 !important;
+    }
+
+    /* Total Planted & Participating Plots: fill empty slots in Row 3 */
+    #card-total-planted {
+        grid-column: 6 / span 1 !important;
+        grid-row: 3 !important;
+    }
+
+    #card-participating {
+        grid-column: 7 / span 2 !important;
+        grid-row: 3 !important;
+    }
+
+    /* Visuals */
+    .kpi-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        border-color: #000 !important;
+    }
+
+    /* Responsive Fallback (Lowered to 1100px) */
+    @media (max-width: 1100px) {
+        .analytics-dashboard {
+            grid-template-columns: repeat(4, 1fr) !important;
+            grid-auto-rows: auto !important;
+        }
+
+        #card-graph {
+            grid-column: 1 / -1 !important;
+            grid-row: 2 !important;
+            height: 300px !important;
+        }
+
+        #card-year,
+        #card-trees,
+        #card-paved,
+        #card-bio,
+        #card-age,
+        #card-diversity,
+        #card-doors,
+        #card-merged {
+            grid-column: span 1 !important;
+            grid-row: auto !important;
+        }
+    }
+
+    /* --- NUCLEAR OVERRIDE FOR START BUTTON HOVER --- */
+    /* High specificity to defeat all other rules */
+    html body #mode-toggle:hover {
+        background-color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+        opacity: 1 !important;
+    }
+
+    /* Force all children (text, svgs, spans) to be black */
+    html body #mode-toggle:hover * {
+        color: #000000 !important;
+        fill: #000000 !important;
+        stroke: #000000 !important;
+    }
+
+    /* --- ACTIVE BUTTON STATE (Graph/View Toggles) --- */
+    /* Match Start Button: White Background, Black Border, Black Text */
+    .canvas-overlay-btn[data-active="true"],
+    .canvas-overlay-btn.active,
+    .tab-btn.active {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+    }
+
+    .canvas-overlay-btn[data-active="true"] svg,
+    .canvas-overlay-btn.active svg,
+    .tab-btn.active svg {
+        color: #000000 !important;
+        stroke: #000000 !important;
+        fill: none !important;
+        /* Ensure no fill unless needed */
+    }
+
+    /* --- VIEW TRANSITIONS (Vertical Slide) --- */
+    .canvas-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Base Wrapper Styles */
+    .canvas-wrapper {
+        position: absolute !important;
+        /* Force absolute to stack */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        /* Smooth cinematic ease */
+        background: var(--surface-bg);
+        /* Ensure solid background so they cover each other */
+        display: flex !important;
+        /* Force flex, override display:none */
+        flex-direction: column;
+    }
+
+    /* Grid View: Default (0,0) */
+    #grid-view {
+        z-index: 10;
+        transform: translateY(0);
+    }
+
+    /* Graph View: Sky Position (0, -100%) */
+    #graph-view {
+        z-index: 20;
+        transform: translateY(-100%);
+    }
+
+    /* State: Analytics Active (Camera Up, World Down) */
+    .canvas-container.view-analytics #grid-view {
+        transform: translateY(100%);
+    }
+
+    .canvas-container.view-analytics #graph-view {
+        transform: translateY(0);
+    }
+}
+
+/* --- TACTILE FEEDBACK & PROGRESS SHIMMER --- */
+
+/* 1. Tactile Button Feedback */
+.canvas-overlay-btn:active,
+.tab-btn:active,
+button:active,
+.settings-btn:active,
+.btn-primary:active,
+#mode-toggle:active {
+    transform: scale(0.96) !important;
+    /* Force override of hover scales */
+    transition: transform 0.05s ease-out !important;
+}
+
+/* 2. Live Progress Shimmer */
+#year-progress-bar {
+    position: relative;
+    /* Needed for ::after absolute positioning */
+    overflow: hidden;
+    /* Clip the shimmer */
+}
+
+/* The Shimmer Effect */
+#year-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            transparent);
+    transform: translateX(-100%);
+    animation: progress-shimmer 2s infinite linear;
+}
+
+@keyframes progress-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* --- FINAL DARK MODE OVERRIDES (The Nuclear Option) --- */
+/* These rules are placed at the end of the file to guarantee cascade priority */
+
+/* 1. Stat Pills Text Visibility */
+body.dark-mode .stat-pill span.value,
+body.dark-mode .stat-pill span.label,
+body.dark-mode .stat-pill .value,
+body.dark-mode .stat-pill .label {
+    color: #FFFFFF !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    opacity: 1 !important;
+}
+
+body.dark-mode .stat-pill span.label {
+    color: #E2E8F0 !important;
+}
+
+/* 2. Stat Pills Backgrounds */
+body.dark-mode .card-body.stats-grid .stat-pill.green {
+    background: #1C4532 !important;
+    border-color: #2F855A !important;
+}
+
+body.dark-mode .card-body.stats-grid .stat-pill.farm {
+    background: #443310 !important;
+    border-color: #B7791F !important;
+}
+
+body.dark-mode .card-body.stats-grid .stat-pill.sport {
+    background: #2A4365 !important;
+    border-color: #4299E1 !important;
+}
+
+body.dark-mode .card-body.stats-grid .stat-pill.workshop {
+    background: #7B341E !important;
+    border-color: #C05621 !important;
+}
+
+body.dark-mode .card-body.stats-grid .stat-pill.void {
+    background: #2D3748 !important;
+    border-color: #4A5568 !important;
+}
+
+/* 3. Analytics Dashboard Backgrounds */
+body.dark-mode .canvas-container {
+    background: #171923 !important;
+}
+
+body.dark-mode .analytics-dashboard,
+body.dark-mode .canvas-wrapper {
+    background: transparent !important;
+}
+
+body.dark-mode .graph-container-inner {
+    background: #1F2937 !important;
+    border: 1px solid #374151 !important;
+}
+
+body.dark-mode .graph-header .kpi-label,
+body.dark-mode .kpi-sub {
+    color: #E2E8F0 !important;
+}
+
+/* 4. Toggle Buttons (Nuclear Override) */
+body.dark-mode #blueprint-toolbar button,
+body.dark-mode #resetViewBtn,
+body.dark-mode .canvas-overlay-btn {
+    background: #2D3748 !important;
+    color: #E2E8F0 !important;
+    border-color: #4A5568 !important;
+}
+
+body.dark-mode #blueprint-toolbar button:hover,
+body.dark-mode #resetViewBtn:hover,
+body.dark-mode .canvas-overlay-btn:hover {
+    background: #4A5568 !important;
+    color: #FFFFFF !important;
+}
+
+body.dark-mode #blueprint-toolbar button.active,
+body.dark-mode .canvas-overlay-btn.active {
+    background: #4299E1 !important;
+    /* Bright Blue for Active */
+    border-color: #2B6CB0 !important;
+    color: #FFFFFF !important;
+}
+
+body.dark-mode #blueprint-toolbar button.active svg,
+body.dark-mode .canvas-overlay-btn.active svg {
+    stroke: #FFFFFF !important;
+}
+
+/* --- FINAL NUCLEAR OVERRIDES for Toolbar --- */
+/* Placed at end of file to ensure priority */
+#darkModeToggle,
+#saveLayout,
+#loadLayoutBtn,
+#exportBtn,
+#settingsBtn,
+.topbar-actions .btn-secondary {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+}
+
+/* Ensure text/icon visibility */
+body.dark-mode #darkModeToggle,
+body.dark-mode #saveLayout,
+body.dark-mode #loadLayoutBtn,
+body.dark-mode #exportBtn,
+body.dark-mode #settingsBtn,
+body.dark-mode .topbar-actions .btn-secondary {
+    color: #E2E8F0 !important;
+    fill: #E2E8F0 !important;
+    stroke: #E2E8F0 !important;
+}
+
+body:not(.dark-mode) #darkModeToggle,
+body:not(.dark-mode) #saveLayout,
+body:not(.dark-mode) #loadLayoutBtn,
+body:not(.dark-mode) #exportBtn,
+body:not(.dark-mode) #settingsBtn,
+body:not(.dark-mode) .topbar-actions .btn-secondary {
+    color: #2D3748 !important;
+    fill: #2D3748 !important;
+    stroke: #2D3748 !important;
+}
+
+/* Hover States - Restore Visibility */
+#darkModeToggle:hover,
+#saveLayout:hover,
+#loadLayoutBtn:hover,
+#exportBtn:hover,
+#settingsBtn:hover,
+.topbar-actions .btn-secondary:hover {
+    background-color: var(--surface-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- PINNED RULE HIGHLIGHT --- */
+/* Visual feedback when a rule is right-clicked to pin the highlight */
+.rule-pinned {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-left: 3px solid #3B82F6 !important;
+    padding-left: 8px !important;
+    transition: background 0.2s, border-left 0.2s;
+}
+
+body.dark-mode .rule-pinned {
+    background: rgba(59, 130, 246, 0.25) !important;
+    border-left-color: #60A5FA !important;
+}
+
+/* ============================================================
+   EXHIBITION MODE (body.expo) — see EXPO_MODE in script.js
+   ============================================================ */
+body.expo #saveLayout,
+body.expo #loadLayoutBtn,
+body.expo #exportBtn,
+body.expo #exportMenu,
+body.expo #settingsBtn {
+    display: none !important;
+}
+
+/* Erase toggle in the palette (all devices) */
+.palette-button.erase-toggle.erase-on {
+    background-color: #2D3748 !important;
+    box-shadow: 0 0 0 2px #E53E3E;
+}
+
+.palette-button.erase-toggle.erase-on svg path {
+    stroke: #FFFFFF;
+}
+
+/* ============================================================
+   TOUCH / TABLET (body.touch) — set on coarse-pointer screens
+   ============================================================ */
+html,
+body.touch {
+    overscroll-behavior: none;              /* no pull-to-refresh */
+}
+
+body.touch {
+    -webkit-user-select: none;              /* no text selection on long press */
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;             /* no double-tap zoom */
+}
+
+body.touch #myCanvas {
+    touch-action: none;                     /* all gestures on the map go to the simulator */
+}
+
+/* Bigger touch targets (±44 px) */
+body.touch .palette-button {
+    width: 44px !important;
+    height: 44px !important;
+}
+
+body.touch .palette-grid {
+    gap: 6px;
+}
+
+body.touch .btn-icon {
+    min-height: 44px;
+    font-size: 1.2rem;
+}
+
+body.touch .canvas-overlay-btn,
+body.touch #resetViewBtn,
+body.touch #blueprint-toolbar button {
+    width: 44px !important;
+    height: 44px !important;
+}
+
+body.touch .tab-btn,
+body.touch .topbar-actions .btn-secondary {
+    min-height: 44px;
+}
+
+body.touch .slider {
+    height: 6px;
+}
+
+body.touch .slider::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+}
+
+body.touch .rule-item input[type="checkbox"],
+body.touch input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+}
+
+body.touch details > summary {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Info text docked at the bottom centre instead of following the (absent) mouse */
+body.touch .floating-tooltip {
+    left: 50% !important;
+    top: auto !important;
+    bottom: 24px;
+    transform: translateX(-50%);
+    max-width: min(560px, 80vw);
+    font-size: 15px;
+    text-align: center;
+}
+
+/* Pixel Mode uses the heavy legacy canvas renderer and its button collides with the tabs on a tablet */
+body.expo #togglePixelBtn {
+    display: none !important;
+}
+
+/* Touch: map toolbar as a column along the left edge, so it never collides with the centred tabs */
+body.touch #blueprint-toolbar {
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+/* Touch: bigger close buttons (inspector, modal) */
+body.touch #close-inspector,
+body.touch #modal-close-btn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.4rem;
+}

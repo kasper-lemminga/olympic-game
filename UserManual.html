@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Manual</title>
+    <style>
+        :root {
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --color-bg: #FFFFFF;
+            --color-text: #1a202c;
+            --color-heading: #000000;
+            --color-accent: #0000FF;
+            /* Updated to match simulation accent */
+            --color-border: #E2E8F0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            /* We ignore system dark mode preference here to keep manual readable in modal overlay context, 
+               but we can adapt if needed. For now, white paper look is clean. */
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--color-text);
+            background: var(--color-bg);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-main);
+            color: var(--color-heading);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            border-bottom: 4px solid var(--color-heading);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #4A5568;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            font-weight: 700;
+            color: #000;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            background: #EDF2F7;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--color-accent);
+            margin: 0;
+            padding-left: 1rem;
+            color: #4A5568;
+            background: #F7FAFC;
+            padding: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Title Removed: Displayed in Modal Header -->
+
+
+    <h2>1. Introduction</h2>
+    <p>The <strong>Olympic Village Planner</strong> is an interactive urban simulation tool designed to explore the
+        balance between housing, industry, recreation, and green space. It functions as a "living blueprint," where you
+        act as the zoning authority, painting designations onto a grid, while the simulation fills those zones with
+        buildings, trees, and activity based on a set of dynamic rules.</p>
+
+    <h2>2. Interface Overview</h2>
+    <p>The interface is divided into four main sections:</p>
+    <ul>
+        <li><strong>Top Bar:</strong> Current year, manual, day/night mode, layout files, image export and settings.
+        </li>
+        <li><strong>Left Sidebar:</strong> Simulation controls, zoning palette, and planning rules.</li>
+        <li><strong>Center Canvas:</strong> The interactive map where you paint and observe the simulation.</li>
+        <li><strong>Right Sidebar:</strong> Composition breakdown and detailed configuration sliders.</li>
+    </ul>
+
+    <h2>3. Controls & Navigation</h2>
+    <ul>
+        <li><strong>Left Click:</strong> Paint with the selected brush (Draw Mode) / open the Plot Info of a plot
+            (Simulation Mode).</li>
+        <li><strong>Click & Drag:</strong> Paint continuously.</li>
+        <li><strong>Shift + Drag:</strong> Fill a rectangle with the selected brush.</li>
+        <li><strong>Right Click + Drag:</strong> Pan the view.</li>
+        <li><strong>Scroll Wheel:</strong> Zoom In / Out.</li>
+    </ul>
+
+    <h2>4. Getting Started</h2>
+    <p>To begin using the planner:</p>
+    <ol>
+        <li><strong>Select a Tool:</strong> Click on a zone type in the <strong>Zoning Palette</strong> (Left Sidebar).
+        </li>
+        <li><strong>Paint:</strong> Click and drag on the map to apply the zone.</li>
+        <li><strong>Run:</strong> Click the <strong>Start Simulation</strong> button in the Status card.</li>
+        <li><strong>Observe:</strong> Watch as plots spawn, age, and evolve based on your design and the active rules.
+        </li>
+    </ol>
+
+    <h2>5. Simulation Controls</h2>
+    <p>Located in the <strong>Status</strong> card on the top left:</p>
+    <ul>
+        <li><strong>START SIMULATION / STOP & EDIT ZONES:</strong> Switches between Draw Mode (painting zones) and
+            Simulation Mode. Stopping keeps everything that has grown so far, so you can adjust the zoning and continue.
+        </li>
+        <li><strong>Play:</strong> Resumes the simulation.</li>
+        <li><strong>Pause:</strong> Freezes time. Useful for inspecting specific details or taking screenshots.</li>
+        <li><strong>Reset:</strong> Starts over from the year 2025 with an empty grid.</li>
+    </ul>
+    <blockquote><strong>Reset also clears the painted zoning, paths and removed tiles.</strong> Use <strong>Save
+            Layout</strong> first, and <strong>Load Layout</strong> afterwards to run the same plan again.</blockquote>
+    <p>One simulation step equals <strong>one year</strong>.</p>
+
+    <h2>6. View Modes & Visuals</h2>
+    <p>The toolbar floating on the top-left of the map provides several visualization options:</p>
+    <ul>
+        <li><strong>Suitability Metrics:</strong> Displays the suitability score of each plot as a number (see section
+            10).</li>
+        <li><strong>Heatmap:</strong> Darkens plots according to how far their score lies above the base score of their
+            type. Dark areas are strong clusters of the same use.</li>
+        <li><strong>Shadows:</strong> Turns the shadows of buildings and trees on/off.</li>
+        <li><strong>Objects:</strong> Hides/Shows the 3D isometric buildings and trees.</li>
+        <li><strong>Pixel Mode:</strong> Simplify the view into a retro, pixelated aesthetic.</li>
+        <li><strong>Reset View:</strong> Centers the camera on the grid.</li>
+    </ul>
+
+    <p><strong>Tab Navigation:</strong></p>
+    <ul>
+        <li><strong>Grid View:</strong> The standard isometric map.</li>
+        <li><strong>Analytics:</strong> A historical timeline graph and detailed KPI dashboard.</li>
+    </ul>
+
+    <p><strong>Plot Info:</strong> In Simulation Mode, click a plot to see its type, zone, position, merge status,
+        paths and suitability score. Click it again (or click outside the grid) to close.</p>
+
+    <h2>7. The Zoning Palette</h2>
+    <p>Select these brushes to paint on the grid. A zone is a designation, not a building: it makes a certain use more
+        likely, and the simulation decides what actually appears.</p>
+    <ul>
+        <li><strong>NEUTRAL:</strong> No preference. Any use can appear. Also use it to clear a painted zone.</li>
+        <li><strong>GREEN:</strong> Parks, gardens and wilderness.</li>
+        <li><strong>SPORT:</strong> Recreational facilities (courts, fields).</li>
+        <li><strong>WORKSHOP:</strong> Light industrial/production spaces.</li>
+        <li><strong>FARMING:</strong> Agricultural plots (greenhouses, fields).</li>
+        <li><strong>SKELETON (S):</strong> Road infrastructure. Nothing is built here.</li>
+        <li><strong>AQUEDUCT:</strong> Historic water infrastructure (protected). Nothing is built here.</li>
+        <li><strong>EXISTING HOUSING:</strong> Places existing buildings (context). These are permanent structures
+            that influence neighbors but don't change.</li>
+        <li><strong>NONE:</strong> Excluded zone. Plots stay empty and do not take part in the simulation.</li>
+        <li><strong>PATH:</strong> Draws pedestrian paths along the edges of tiles. <em>Shift + Click to remove.</em>
+        </li>
+        <li><strong>FREEZE (snowflake):</strong> Locks plots in place so they are unaffected by the simulation. See
+            section 8 below.</li>
+        <li><strong>BOARD EDITOR (red):</strong> Changes the shape of the board itself. Click to add a tile back,
+            <em>Shift + Click (or Shift + Drag) to remove tiles</em>.</li>
+    </ul>
+
+    <h2>8. Freeze Tool</h2>
+    <p>The <strong>Freeze Tool</strong> (snowflake icon) allows you to lock specific plots on the grid. Frozen plots are
+        completely excluded from the simulation: they will not age, decay, spawn new buildings, change type, or
+        participate in merges. This is useful for preserving a specific layout or testing how the simulation behaves
+        around fixed elements.</p>
+    <ul>
+        <li><strong>Freeze:</strong> Select the Freeze tool, then <strong>click and drag</strong> a rectangle over the
+            plots you want to lock. A blue overlay will appear on frozen tiles.</li>
+        <li><strong>Unfreeze:</strong> Hold <strong>Shift</strong> while clicking and dragging to remove the freeze from
+            a selection of tiles.</li>
+    </ul>
+    <blockquote>The Freeze tool is only available in <strong>Draw Mode</strong>. It automatically deactivates when you
+        switch to Simulation Mode.</blockquote>
+
+    <h2>9. Planning Constraints (The Rules)</h2>
+    <p>These toggles in the <strong>Left Sidebar</strong> are the hard rules of the game. Turning them on/off
+        changes how the village evolves. <strong>Hover</strong> over a rule to highlight on the map where it applies;
+        <strong>right-click</strong> a rule to keep that highlight pinned.</p>
+    <ul>
+        <li><strong>Workshop Noise Buffer:</strong> <em>Workshops</em> cannot appear within 2 tiles of
+            <em>Existing Housing</em>.
+        </li>
+        <li><strong>Sport Noise Buffer:</strong> <em>Sports</em> facilities cannot appear directly next to
+            <em>Existing Housing</em>.
+        </li>
+        <li><strong>Threshold Zone:</strong> Buildings position and orient themselves within their plot in relation to
+            <em>Skeleton</em> roads and paths.
+        </li>
+        <li><strong>Build Threshold Zone:</strong> A <em>Farming</em> plot places its greenhouse on the side facing
+            away from adjacent <em>Existing Housing</em>. If that is impossible, no farm appears there.</li>
+        <li><strong>Aqueduct Zone:</strong> Only <em>Green</em> plots can appear next to the historic
+            <em>Aqueduct</em>.
+        </li>
+        <li><strong>Tree Donation to Green Type:</strong> Sport, Farming and Workshop plots "donate" their tree to an
+            adjacent <em>Green</em> plot, making parks denser.
+        </li>
+        <li><strong>Door to Plot:</strong> New plots can create doors on adjacent <em>Existing Buildings</em>,
+            graphically linking new development to old (visual only).</li>
+        <li><strong>Roof Gardens:</strong> Allows <em>Existing Buildings</em> to grow a garden on their roof.</li>
+        <li><strong>Green Zone Compliance:</strong> <em>Workshops</em> in Green Zones get a green roof and a
+            decorative tree to blend in.</li>
+        <li><strong>Plot Merging:</strong> Two adjacent plots of the same type can merge into one larger plot once they
+            are old enough.</li>
+        <li><strong>Green Lung:</strong> 60% of the village surface must remain unpaved. Once the <em>Paved
+                Surface</em> reaches 40%, only <em>Green</em> and <em>Farming</em> plots can appear until it drops below
+            the limit again.</li>
+    </ul>
+
+    <h2>10. How the Simulation Decides (Suitability)</h2>
+    <p>This is the engine behind everything you see. Every year, each plot that takes part in the simulation is
+        evaluated on its own. Nothing is planned from above: the pattern emerges from many small local decisions, each
+        of them a roll of the dice with odds that depend on the location.</p>
+
+    <h3>An empty plot: what could appear here?</h3>
+    <p>For each of the four uses (Green, Farming, Sport, Workshop) the simulation adds up a <strong>development
+            chance</strong>:</p>
+    <ul>
+        <li><strong>Market Demand:</strong> the base chance of that use (default 1%).</li>
+        <li><strong>+ Zoning Compliance:</strong> added when the plot lies in the zone of that use (default 20%).
+            Farming also gets half of this bonus in a Green zone.</li>
+        <li><strong>+ Proximity Bonus:</strong> added for <em>each</em> of the 8 surrounding plots that already has
+            the same use (default 10% per neighbor). This is what makes uses cluster.</li>
+        <li><strong>+ Infrastructure Weight:</strong> added for Workshops next to a Skeleton road (default 10%).</li>
+    </ul>
+    <p>The planning rules of section 9 work as a veto: if a rule forbids a use on this plot, its chance is zero no
+        matter how high the sum is. The four uses are then tried in random order, and the first one that wins its roll
+        is built. If none wins, the plot stays empty for another year.</p>
+    <blockquote><strong>Example.</strong> An empty plot in a Green zone with two Green neighbors has a chance of
+        roughly 1% + 20% + 2 &times; 10% = <strong>41%</strong> per year to become Green. The same plot has only a 1% chance to
+        become a Workshop. Zoning steers, but never fully dictates.</blockquote>
+
+    <h3>A developed plot: does it stay?</h3>
+    <ul>
+        <li><strong>Attrition:</strong> every year a plot has a small chance to fall out of use (Attrition Rate,
+            default 3%). It then decays and is empty again one year later.</li>
+        <li><strong>Re-evaluation:</strong> once a plot is older than the <strong>Maturity Age</strong> (default 10
+            years, the length of a lease cycle) it has a 10% chance per year to be reconsidered. The same sum as above is made again, and if another
+            use wins, the plot changes. A plot that no longer fits its surroundings is therefore replaced over time,
+            while a plot in a strong cluster tends to be confirmed.</li>
+        <li><strong>Merging:</strong> two neighboring plots of the same use that are both older than the Merge Age
+            can merge (Merge Chance per year).</li>
+    </ul>
+
+    <h3>The suitability score</h3>
+    <p>The number shown by <strong>Suitability Metrics</strong>, the <strong>Heatmap</strong> and the Plot Info is a
+        reading of how well a plot is embedded in its surroundings:</p>
+    <p><code>score = base score of its use + bonus for each of the 8 neighbors with the same use</code></p>
+    <ul>
+        <li><strong>Base score:</strong> set per use with the Base Score sliders (default 1.0).</li>
+        <li><strong>Neighbor bonus:</strong> Green +0.25, Sport +0.20, Workshop +0.15, Farming +0.15 per neighbor.</li>
+    </ul>
+    <p>With the default settings a lonely plot scores 1.0 and a Green plot completely surrounded by Green scores 3.0.
+        Empty plots have no score.</p>
+    <blockquote>The score <strong>measures</strong> clustering, it does not cause it. The decisions are made by the
+        development chance above. Both use the same ingredient (same-use neighbors), so a high score marks a place where
+        that use is also most likely to be confirmed or to spread.</blockquote>
+
+    <h2>11. Configuration (Right Sidebar)</h2>
+    <p>Fine-tune the behavior of the simulation engine. Section 10 explains how these values work together.</p>
+
+    <h3>Stability Parameters (Base Scores)</h3>
+    <ul>
+        <li><strong>Green / Farm / Sport / Work:</strong> The starting value of the suitability score for each use.
+            This changes what the Suitability Metrics and Heatmap show; it does not change how fast plots decay or
+            are replaced.</li>
+    </ul>
+
+    <h3>Market Demand</h3>
+    <p>Controls the "birth rate" of new plots.</p>
+    <ul>
+        <li><strong>Green Space / Agriculture / Sports / Production:</strong> The base chance per year for that use to
+            appear on an empty plot.</li>
+    </ul>
+
+    <h3>Simulation Constants</h3>
+    <ul>
+        <li><strong>Time Scale:</strong> Speed of the simulation (time per year).</li>
+        <li><strong>Zoning Compliance:</strong> How strongly a zone attracts its own use (Lower = more
+            chaotic/organic mixing).</li>
+        <li><strong>Proximity Bonus:</strong> How much each neighbor of the same use raises the chance (Higher =
+            stronger clusters).</li>
+        <li><strong>Infrastructure Weight:</strong> Extra chance for Workshops next to Skeleton roads.</li>
+        <li><strong>Attrition Rate:</strong> Chance per year that a plot falls out of use (Turnover rate).</li>
+        <li><strong>Maturity Age:</strong> How many years a plot stays untouched before it can be re-evaluated.</li>
+        <li><strong>Merge Age & Chance:</strong> How old two neighboring plots must be before they can merge into one
+            double plot, and the chance per year that they do.</li>
+        <li><strong>Door Chance:</strong> Chance that a new plot creates a door on an adjacent existing building.</li>
+        <li><strong>Topping Chance:</strong> Chance per year that an existing building gets a roof garden.</li>
+    </ul>
+
+    <h3>Context Layer</h3>
+    <p>Allows you to upload an underlay image (e.g., a real site plan) to trace over. You can adjust its
+        <strong>Opacity</strong>, <strong>Position</strong>, and <strong>Scale</strong> to match the grid.
+    </p>
+
+    <h3>Settings (Wrench Icon, Top Bar)</h3>
+    <ul>
+        <li><strong>Grid Size:</strong> Number of columns and rows. Changing it restarts the simulation.</li>
+        <li><strong>Simulation Seed:</strong> A specific number that initializes the random generator. Using the same
+            seed will produce the exact same sequence of events. Changing it restarts the simulation.</li>
+        <li><strong>Spatial Seed Mode:</strong> When enabled, plots generate randomness based on their fixed coordinates
+            rather than a global sequence.
+            <ul>
+                <li><em>Enabled (Spatial Hashing):</em> Allows you to isolate parameter tweaks (A/B testing) without
+                    causing a "butterfly effect" across the entire map.</li>
+                <li><em>Disabled (Butterfly Effect):</em> The village evolves organically and chaotically; a single
+                    change causes the timeline to fracture for all subsequent events.</li>
+            </ul>
+        </li>
+        <li><strong>Level of Detail:</strong> Simplifies the drawing when zoomed out, for better performance on large
+            grids.</li>
+        <li><strong>Pixel Detail Factor:</strong> How coarse the pixels of Pixel Mode are.</li>
+        <li><strong>Data Export:</strong> See section 13.</li>
+    </ul>
+
+    <h2>12. Analytics & KPIs</h2>
+    <p>Monitor the health of your neighborhood in the <strong>Analytics</strong> tab:</p>
+    <ul>
+        <li><strong>Composition Timeline:</strong> The share of Green, Farming, Sport, Workshop and empty plots through
+            the years.</li>
+        <li><strong>Current Trees / Total Planted:</strong> Trees standing now, and all trees planted during the run.
+        </li>
+        <li><strong>Participating Plots:</strong> Plots that take part in the simulation. Removed tiles, NONE zones,
+            Skeleton, Aqueduct and Existing Housing are excluded.</li>
+        <li><strong>Paved Surface:</strong> Percentage of hardscape (Workshops, Sport, Existing Buildings, Skeleton
+            roads and paths).</li>
+        <li><strong>Bio-Permeable:</strong> Percentage of land that absorbs water (Green, Farming, Aqueduct and empty
+            plots, minus the paths on them).</li>
+        <li><strong>Avg. Building Age:</strong> Average age of all developed plots. A high age indicates a stable,
+            mature neighborhood.</li>
+        <li><strong>Door Count:</strong> Number of doors created on existing buildings.</li>
+        <li><strong>Diversity Score:</strong> Measures the mix of Green, Farming, Sport and Workshop. 100 means a
+            perfect equal mix; 0 means a monoculture.</li>
+        <li><strong>% Merged:</strong> How many plots of each use have merged into larger plots.</li>
+    </ul>
+
+    <h2>13. Saving & Exporting</h2>
+    <ul>
+        <li><strong>Save/Load Layout:</strong> Saves your <em>Zoning Map</em> (zones, paths and the shape of the board)
+            to a JSON file so you can continue working later. A layout can only be loaded into a grid of the same size.
+        </li>
+        <li><strong>Export Image (Camera Icon):</strong> Takes a high-resolution screenshot.
+            <ul>
+                <li><strong>Resolution:</strong> 1x up to 10x (A0 Poster Quality), or a 4-tile A0 export in 4 files.
+                </li>
+                <li><strong>Format:</strong> JPG or PNG.</li>
+                <li><strong>Scope:</strong> "Current View" captures what you see; "Entire Map" captures the whole
+                    grid, even parts off-screen.</li>
+            </ul>
+        </li>
+        <li><strong>Export .JSON (Settings):</strong> Exports the 3D data structure for import into Blender 3D for
+            professional rendering.</li>
+    </ul>
+
+</body>
+
+</html>

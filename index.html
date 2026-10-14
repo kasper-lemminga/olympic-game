@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        .canvas-overlay-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .canvas-overlay-btn:hover {
+            background: #f7fafc;
+            transform: scale(1.05);
+            color: #2d3748;
+        }
+
+        .canvas-overlay-btn.active {
+            background: #4299e1;
+            color: white;
+            border-color: #3182ce;
+        }
+
+        .reset-view-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 90;
+        }
+
+        .canvas-controls-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Settings Menu Styles */
+        .settings-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .settings-btn {
+            width: 38px;
+            /* Square button */
+            height: 38px;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 240px;
+            padding: 12px;
+            z-index: 1000;
+            color: #2d3748;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .settings-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .settings-menu label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .settings-menu input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #4299e1;
+        }
+
+        /* Export Menu Specifics */
+        .export-section {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .export-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+
+        .radio-group input[type="radio"] {
+            accent-color: #4299e1;
+        }
+
+        /* Ensure menus are above canvas controls */
+        .settings-menu {
+            z-index: 2000;
+            /* Higher than canvas controls */
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-primary.small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+
+        /* INSPECTOR CARD */
+        .inspector-card {
+            position: fixed;
+            width: 220px;
+            /* narrowed */
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+            z-index: 5000;
+            font-family: 'Inter Tight', sans-serif;
+            display: none;
+            pointer-events: auto;
+        }
+
+        .inspector-header {
+            background: white;
+            padding: 8px 12px;
+            /* reduced padding */
+            border-bottom: 2px solid #E5E5E5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: black;
+        }
+
+        .inspector-content {
+            padding: 10px 12px;
+            /* reduced padding */
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            /* reduced gap */
+        }
+
+        .inspector-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.8rem;
+            /* smaller font */
+            line-height: 1.3;
+        }
+
+        .inspector-label {
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .inspector-value {
+            color: black;
+            font-weight: 700;
+            text-align: right;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .inspector-separator {
+            height: 1px;
+            border-top: 1px dashed #CCC;
+            margin: 4px 0;
+        }
+
+        .inspector-section-title {
+            color: #AAA;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .val-good {
+            color: #27AE60;
+        }
+
+        .val-bad {
+            color: #EB5757;
+        }
+
+        .val-blue {
+            color: #2F80ED;
+        }
+
+        /* Blue (Tree Donation) */
+    </style>
+    <title>Olympic Village Planner</title>
+    <!-- Using Inter font for professional look -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css?v=expo1">
+    <style>
+        /* CRITICAL: Enforce View Transitions override */
+        .canvas-container {
+            position: relative;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            background-color: #E2E8F0;
+            /* Darker Slate-200 */
+        }
+
+        .canvas-wrapper {
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* Ensure solid bg */
+            background-color: #E2E8F0;
+            display: flex !important;
+            flex-direction: column;
+        }
+
+        #grid-view {
+            z-index: 10;
+            transform: translateY(0);
+        }
+
+        #graph-view {
+            z-index: 20;
+            transform: translateY(-100%);
+            padding-top: 80px;
+            /* Float underneath tab buttons */
+        }
+
+        /* Active State */
+        .canvas-container.view-analytics #grid-view {
+            transform: translateY(100%) !important;
+        }
+
+        .canvas-container.view-analytics #graph-view {
+            transform: translateY(0) !important;
+        }
+
+        /* FIXED: Ensure Tab Bar sits on top of the transition layers */
+        .tab-bar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100 !important;
+        }
+
+        /* FIXED: Ensure Tab Bar sits on top of the transition layers */
+        .tab-bar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100 !important;
+        }
+
+        /* --- MODAL SYSTEM --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-window {
+            background: #ffffff;
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            border-radius: 0;
+            /* SHARP CORNERS */
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            /* HARD SHADOW */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #000000;
+            /* SHARP BORDER */
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-window {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 12px 16px;
+            border-bottom: 2px solid #E2E8F0;
+            /* THICKER BORDER */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            /* WHITE BCK */
+        }
+
+        .modal-title {
+            font-family: var(--font-main);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            /* UPPERCASE */
+            letter-spacing: 0.05em;
+            color: #2d3748;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #718096;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1;
+            padding: 0 4px;
+        }
+
+        .modal-close:hover {
+            color: #000000;
+            /* BLACK ON HOVER */
+        }
+
+        .modal-close:hover {
+            color: #e53e3e;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+        }
+
+        iframe.modal-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Dark Mode for Modal */
+        body.dark-mode .modal-window {
+            background: #1a202c;
+            border-color: #2d3748;
+        }
+
+        body.dark-mode .modal-header {
+            background: #2d3748;
+            border-bottom-color: #4a5568;
+        }
+
+        body.dark-mode .modal-title {
+            color: #f7fafc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="marquee-container">
+        <div class="marquee-content">
+            PLANNING CONSTRAINTS: INDUSTRIAL BUFFER: ACTIVE /// ROOF GARDENS: CHECKED /// DIVERSITY SCORE: OPTIMAL ///
+            ZONING COMPLIANCE: 100% /// NEO-SWISS BLUEPRINT: ONLINE
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <!-- TOP NAVIGATION BAR -->
+        <nav class="app-topbar">
+            <div class="brand">
+                <div class="status-label" style="font-size: 10px; margin-bottom: 4px;">CURRENT YEAR</div>
+                <div id="date-display" class="status-value" style="font-size: 3rem; line-height: 1;">2025</div>
+            </div>
+
+            <div class="topbar-status">
+                <!-- Year moved to top-left -->
+            </div>
+
+            <div class="topbar-actions">
+                <button id="helpBtn" class="btn-secondary settings-btn" data-info="Open User Manual">
+                    <!-- Question Mark Icon -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </button>
+                <button id="darkModeToggle" class="btn-secondary"
+                    data-info="Switch between Day and Night presentation modes.">🌙
+                    Dark</button>
+                <button id="saveLayout" class="btn-secondary"
+                    data-info="Export current zoning configuration to a JSON file.">Save Layout</button>
+                <button id="loadLayoutBtn" class="btn-secondary"
+                    data-info="Import a zoning configuration from a JSON file.">Load
+                    Layout</button>
+
+                <div class="settings-container">
+                    <button id="exportBtn" class="btn-secondary settings-btn" data-info="Export Simulation Image">
+                        <!-- Camera Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                            </path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </button>
+                    <div id="exportMenu" class="settings-menu" style="width: 280px;">
+                        <div class="export-section">
+                            <div class="section-title">Resolution</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="exportRes" value="1" checked> 1x</label>
+                                <label><input type="radio" name="exportRes" value="2"> 2x (HD)</label>
+                                <label><input type="radio" name="exportRes" value="4"> 4x (Print)</label>
+                                <label><input type="radio" name="exportRes" value="8"> 8x (A0 Lite)</label>
+                                <label><input type="radio" name="exportRes" value="10"> 10x (A0 Poster)</label>
+                                <label><input type="radio" name="exportRes" value="tile4"> 4-tile A0 Max (4 files)</label>
+                            </div>
+                        </div>
+                        <div class="export-section">
+                            <div class="section-title">Format</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="exportFmt" value="image/jpeg" checked> JPG</label>
+                                <label><input type="radio" name="exportFmt" value="image/png"> PNG</label>
+                            </div>
+                        </div>
+                        <div class="export-section">
+                            <div class="section-title">View Scope</div>
+                            <div class="action-buttons">
+                                <button id="expCurrentView" class="btn-primary small">Current View</button>
+                                <button id="expEntireMap" class="btn-primary small">Entire Map</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-container">
+                    <button id="settingsBtn" class="btn-secondary settings-btn" data-info="Application Settings">
+                        <!-- Wrench Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="settingsMenu" class="settings-menu">
+                        <label title="Grid dimensions (columns × rows). Change restarts simulation."
+                            style="justify-content: space-between; cursor: default;">
+                            <span>Grid Size</span>
+                            <span style="display: flex; gap: 4px; align-items: center;">
+                                <input type="number" id="gridColsInput" min="5" value="30"
+                                    style="width: 50px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 4px; text-align: center;">
+                                <span style="font-size: 0.8rem; color: #718096;">&times;</span>
+                                <input type="number" id="gridRowsInput" min="5" value="30"
+                                    style="width: 50px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 4px; text-align: center;">
+                            </span>
+                        </label>
+                        <div style="font-size: 0.7rem; color: #718096; margin-top: 2px; text-align: right;">
+                            Change to restart sim
+                        </div>
+                        <div style="margin-top: 12px; border-top: 1px solid #edf2f7; padding-top: 12px;">
+                            <label style="justify-content: space-between; cursor: default;">
+                                <span>Data Export</span>
+                                <button id="exportBlenderBtn" class="btn-secondary"
+                                    style="padding: 4px 8px; font-size: 0.8rem;"
+                                    data-info="Export current simplified simulation state to JSON for Blender import.">
+                                    Export .JSON
+                                </button>
+                            </label>
+                        </div>
+                        <div style="margin-top: 12px; border-top: 1px solid #edf2f7; padding-top: 12px;">
+                            <label
+                                title="Controls how pixel size scales with zoom. Lower = More Detail, Higher = Chunkier."
+                                style="justify-content: space-between;">
+                                <span>Pixel Detail Factor</span>
+                                <input type="number" id="pixelExponentInput" min="0.1" max="5.0" step="0.05" value="3.0"
+                                    style="width: 60px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                            </label>
+                        </div>
+                        <div style="margin-top: 12px; border-top: 1px solid #edf2f7; padding-top: 12px;">
+                            <label title="Seed for the random number generator. Same seed = same simulation result."
+                                style="justify-content: space-between;">
+                                <span>Simulation Seed</span>
+                                <input type="number" id="seedInput"
+                                    style="width: 80px; padding: 4px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                            </label>
+                            <div style="font-size: 0.7rem; color: #718096; margin-top: 4px; text-align: right;">
+                                Change to restart sim
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; border-top: 1px solid #edf2f7; padding-top: 12px;">
+                            <label
+                                title="Uses deterministic coordinate-based randomness (Spatial Hashing) for consistent scenario testing. Avoids Butterfly Effect."
+                                style="justify-content: space-between;">
+                                <span>Spatial Seed Mode</span>
+                                <input type="checkbox" id="spatialHashToggle" checked>
+                            </label>
+                            <div style="font-size: 0.7rem; color: #718096; margin-top: 2px;">
+                                Consistent randomness per plot
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; border-top: 1px solid #edf2f7; padding-top: 12px;">
+                            <label title="Simplify rendering when zoomed out for better performance on large grids."
+                                style="justify-content: space-between;">
+                                <span>Level of Detail</span>
+                                <input type="checkbox" id="lodToggle" checked>
+                            </label>
+                            <div style="font-size: 0.7rem; color: #718096; margin-top: 2px;">
+                                Simplify objects when zoomed out
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="file" id="layoutFile" accept=".json" style="display:none">
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <div class="app-body">
+
+            <!-- LEFT SIDEBAR: TOOLS & CONTROLS -->
+            <aside class="sidebar-left">
+
+                <div class="card">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="margin: 0;">Status</h2>
+                        <span id="sim-status-text"
+                            style="font-family: var(--font-data); font-size: 0.8rem; font-weight: bold;">READY ⏹</span>
+                    </div>
+                    <div class="card-body">
+                        <button id="mode-toggle" class="btn-action full-width blueprint-cell"
+                            data-info="Toggle between Layout Editor and Simulation Mode.">START SIMULATION</button>
+                        <div class="button-group" style="margin-top: 12px;">
+                            <button id="start-sim" class="btn-icon blueprint-cell" title="Play"
+                                data-info="Resume simulation.">▶</button>
+                            <button id="pause-sim" class="btn-icon blueprint-cell" title="Pause"
+                                data-info="Pause simulation.">⏸</button>
+                            <button id="reset-sim" class="btn-icon blueprint-cell" title="Reset"
+                                data-info="Reset simulation.">⟳</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Log Removed for Floating Tooltip -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Zoning Palette</h2>
+                        <span class="shortcut-hint">Select to paint</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="palette" class="palette-grid"></div>
+                    </div>
+                </div>
+
+
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Planning Constraints</h2>
+                    </div>
+                    <div class="card-body">
+
+                        <details class="config-section">
+                            <summary style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #edf2f7;">
+                                Rules</summary>
+                            <div class="section-content" style="padding-top: 8px;">
+                                <label class="toggle-control"
+                                    data-info="Workshops cannot spawn within a 2-tile radius of Existing Housing to prevent pollution.">
+                                    <input type="checkbox" id="ruleWorkshopDistance" checked>
+                                    <span class="toggle-label">Workshop Noise Buffer</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Sports facilities cannot spawn immediately adjacent (1 tile) to Existing Housing.">
+                                    <input type="checkbox" id="ruleSportDistance" checked>
+                                    <span class="toggle-label">Sport Noise Buffer</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="New buildings are prohibited from spawning directly on Skeleton roads.">
+                                    <input type="checkbox" id="ruleBuildingRoadConstraint" checked>
+                                    <span class="toggle-label">Threshold Zone</span>
+                                </label>
+
+                                <label class="toggle-control"
+                                    data-info="Farming plots are only permitted to spawn if their greenhouse structure can be oriented away from any directly adjacent Existing Housing.">
+                                    <input type="checkbox" id="ruleFarmingNeighbor" checked>
+                                    <span class="toggle-label">Build Threshold Zone</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Only Green/Park zones are allowed to spawn adjacent to the historic Aqueduct.">
+                                    <input type="checkbox" id="ruleAqueductGreen" checked>
+                                    <span class="toggle-label">Aqueduct Zone</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Non-Green plots donate their potential trees to adjacent Green zones, creating denser forests.">
+                                    <input type="checkbox" id="ruleTreeDonation" checked>
+                                    <span class="toggle-label">Tree Donation to Green Type</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Allow new plots to create doors on adjacent existing buildings (visual only).">
+                                    <input type="checkbox" id="ruleDoorCreation" checked>
+                                    <span class="toggle-label">Door to Plot</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Allow existing buildings to spawn roof gardens (green plots on top).">
+                                    <input type="checkbox" id="ruleTopping" checked>
+                                    <span class="toggle-label">Roof Gardens</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Workshops in Green Zones get a green roof and a decorative tree to blend in.">
+                                    <input type="checkbox" id="ruleGreenZoneCompliance" checked>
+                                    <span class="toggle-label">Green Zone Compliance</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="Allow adjacent same-type plots to merge into larger combined buildings.">
+                                    <input type="checkbox" id="ruleMerging" checked>
+                                    <span class="toggle-label">Plot Merging</span>
+                                </label>
+                                <label class="toggle-control"
+                                    data-info="60% of the village surface must remain unpaved. Once 40% is paved, only Green and Farming plots can appear.">
+                                    <input type="checkbox" id="ruleGreenLung" checked>
+                                    <span class="toggle-label">Green Lung</span>
+                                </label>
+                            </div>
+                    </div>
+
+
+
+            </aside>
+
+            <!-- CANVAS AREA -->
+            <main class="canvas-container">
+                <!-- Wrapper for extra specificity -->
+                <div id="blueprint-toolbar" class="canvas-controls-left">
+                    <button id="toggleScoresBtn" class="canvas-overlay-btn" title="Show Suitability Metrics"
+                        data-active="false" style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                        <!-- Icon: Bar Chart / Text -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 20V10M18 20V4M6 20v-4"></path>
+                        </svg>
+                    </button>
+                    <button id="toggleHeatmapBtn" class="canvas-overlay-btn" title="Visualize Suitability Heatmap"
+                        data-active="false" style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                        <!-- Icon: Layers / Heatmap -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    </button>
+                    <button id="toggleShadowsBtn" class="canvas-overlay-btn active" title="Cast Shadows"
+                        data-active="true" style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                        <!-- Icon: Sun / Shadow -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                    <button id="toggleObjectsBtn" class="canvas-overlay-btn active" title="Show/Hide Buildings & Trees"
+                        data-active="true" style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                        <!-- Icon: Cube (representing 3D objects) -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </button>
+                    <button id="togglePixelBtn" class="canvas-overlay-btn" title="Toggle Pixel Mode" data-active="false"
+                        style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                        <!-- Icon: Pixel Grid -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </button>
+                </div>
+                <button id="resetViewBtn" class="canvas-overlay-btn reset-view-btn" title="Center View"
+                    style="border-radius: 0 !important; width: 42px; height: 42px; padding: 0;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 5V3M12 21v-2M5 12H3m18 0h-2"></path>
+                    </svg>
+                </button>
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="tab-grid" data-info="View the active simulation grid.">Grid
+                        View</button>
+                    <button class="tab-btn" id="tab-graph"
+                        data-info="View historical analytics timeline.">Analytics</button>
+                    <div class="tab-indicator"></div>
+                </div>
+                <div class="canvas-wrapper" id="grid-view">
+                    <canvas id="myCanvas" width="1800" height="1200"></canvas>
+                </div>
+                <div class="canvas-wrapper" id="graph-view" style="display: none;">
+                    <div class="analytics-dashboard">
+                        <!-- KPI Row 1: Top Metrics -->
+                        <div class="kpi-card blueprint-cell" id="card-year" data-info="Current simulation time.">
+                            <span class="kpi-label">Current Year</span>
+                            <span class="kpi-value highlight" id="stat-year">2025</span>
+                        </div>
+                        <div class="kpi-card blueprint-cell" id="card-trees"
+                            data-info="Current number of active trees in the simulation.">
+                            <span class="kpi-label">Current Trees</span>
+                            <span class="kpi-value" id="stat-trees">0</span>
+                        </div>
+                        <div class="kpi-card blueprint-cell" id="card-total-planted"
+                            data-info="Cumulative number of trees planted throughout the simulation history.">
+                            <span class="kpi-label">Total Planted</span>
+                            <span class="kpi-value" id="stat-total-planted">0</span>
+                        </div>
+                        <div class="kpi-card blueprint-cell" id="card-participating"
+                            data-info="Number of plots actively participating in the simulation. Excludes removed, excluded (NONE), Skeleton, Aqueduct, and Existing Building plots.">
+                            <span class="kpi-label">Participating Plots</span>
+                            <span class="kpi-value" id="stat-participating">0</span>
+                        </div>
+                        <div class="kpi-card blueprint-cell" id="card-paved"
+                            data-info="Percentage of land covered by buildings or roads (Workshops, Sport, Infrastructure).">
+                            <span class="kpi-label">Paved Surface</span>
+                            <div class="kpi-content">
+                                <span class="kpi-value" id="stat-paved">0.0%</span>
+                                <span class="kpi-sub" style="color: var(--ui-accent);">Industry / Road</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card blueprint-cell" id="card-bio"
+                            data-info="Percentage of land capable of absorbing water and supporting life (Parks, Farms).">
+                            <span class="kpi-label">Bio-Permeable</span>
+                            <div class="kpi-content">
+                                <span class="kpi-value" id="stat-green">0.0%</span>
+                                <span class="kpi-sub" style="color: #48BB78;">Green / Farm</span>
+                            </div>
+                        </div>
+
+                        <!-- Graph Section -->
+                        <div class="graph-container-inner" id="card-graph">
+                            <div class="graph-header">
+                                <span class="kpi-label">Composition Timeline</span>
+                                <div class="legend-hint">100% Stacked Area</div>
+                            </div>
+                            <canvas id="graphCanvas" width="1800" height="900"></canvas>
+                        </div>
+
+                        <!-- Row 2: Squares and Merged -->
+                        <div class="kpi-card square blueprint-cell" id="card-age"
+                            data-info="Average age of all active buildings. High age indicates a stable, mature neighborhood.">
+                            <span class="kpi-label">Avg. Building Age</span>
+                            <span class="kpi-value" id="stat-age">0.0 Yrs</span>
+                        </div>
+
+                        <div class="kpi-card square blueprint-cell" id="card-doors"
+                            data-info="Total number of active doors in the simulation.">
+                            <span class="kpi-label">Door Count</span>
+                            <span class="kpi-value" id="stat-doors">0</span>
+                        </div>
+
+                        <div class="kpi-card square blueprint-cell" id="card-diversity"
+                            data-info="Diversity Score (0-100). Formula: (Entropy / 2) * 100. 'Entropy' (0-2) is calculated from the mix of Housing, Industry, Sports, and Greenery. It is 0 if only one type dominates, and reaches 2 if all four are present in equal amounts.">
+                            <span class="kpi-label">Diversity Score</span>
+                            <span class="kpi-value" id="stat-diversity">0</span>
+                        </div>
+
+                        <div class="kpi-card blueprint-cell" id="card-merged"
+                            data-info="Percentage of Industry and Farm plots that have merged into larger cooperative structures.">
+                            <span class="kpi-label">% Merged</span>
+                            <div class="kpi-content">
+                                <div
+                                    style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem; margin-bottom:0;">
+                                    <span style="color:#718096">Workshop:</span>
+                                    <span id="stat-merged-workshop" style="font-weight:700">0%</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem; margin-bottom:0;">
+                                    <span style="color:#718096">Farming:</span>
+                                    <span id="stat-merged-farming" style="font-weight:700">0%</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem; margin-bottom:0;">
+                                    <span style="color:#718096">Green:</span>
+                                    <span id="stat-merged-green" style="font-weight:700">0%</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem;">
+                                    <span style="color:#718096">Sports:</span>
+                                    <span id="stat-merged-sport" style="font-weight:700">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="progress-bar-container">
+                    <div id="progress-bar"></div>
+                </div>
+            </main>
+
+            <!-- RIGHT SIDEBAR: ANALYSIS & CONFIG -->
+            <aside class="sidebar-right">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Analysis</h2>
+                    </div>
+                    <div class="card-body stats-grid">
+                        <div class="stat-pill green">
+                            <span class="label">Green</span>
+                            <span id="green-percentage" class="value">0.00%</span>
+                        </div>
+                        <div class="stat-pill farm">
+                            <span class="label">Farm</span>
+                            <span id="farming-percentage" class="value">0.00%</span>
+                        </div>
+                        <div class="stat-pill sport">
+                            <span class="label">Sport</span>
+                            <span id="sport-percentage" class="value">0.00%</span>
+                        </div>
+                        <div class="stat-pill workshop">
+                            <span class="label">Work</span>
+                            <span id="workshop-percentage" class="value">0.00%</span>
+                        </div>
+                        <div class="stat-pill void">
+                            <span class="label">Void</span>
+                            <span id="empty-percentage" class="value">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card scrollable-card">
+                    <div class="card-header">
+                        <h2>Configuration</h2>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Stability Parameters -->
+                        <details class="config-section">
+                            <summary style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #edf2f7;">
+                                STABILITY PARAMETERS</summary>
+                            <div class="section-content" style="padding-top: 8px;">
+                                <div class="param-group"
+                                    data-info="Sets the Suitability Score visual threshold for Green Zones. Does NOT affect attrition/decay.">
+                                    <div class="param-header">
+                                        <label>Green (Base)</label>
+                                        <span id="baseScoreGreenValue">1.0</span>
+                                    </div>
+                                    <input type="range" id="baseScoreGreen" min="0" max="3" step="0.1" value="1.0"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Sets the Suitability Score visual threshold for Agriculture. Does NOT affect attrition/decay.">
+                                    <div class="param-header">
+                                        <label>Farm (Base)</label>
+                                        <span id="baseScoreFarmingValue">1.0</span>
+                                    </div>
+                                    <input type="range" id="baseScoreFarming" min="0" max="3" step="0.1" value="1.0"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Sets the Suitability Score visual threshold for Sports. Does NOT affect attrition/decay.">
+                                    <div class="param-header">
+                                        <label>Sport (Base)</label>
+                                        <span id="baseScoreSportValue">1.0</span>
+                                    </div>
+                                    <input type="range" id="baseScoreSport" min="0" max="3" step="0.1" value="1.0"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Sets the Suitability Score visual threshold for Industry. Does NOT affect attrition/decay.">
+                                    <div class="param-header">
+                                        <label>Work (Base)</label>
+                                        <span id="baseScoreWorkshopValue">1.0</span>
+                                    </div>
+                                    <input type="range" id="baseScoreWorkshop" min="0" max="3" step="0.1" value="1.0"
+                                        class="slider">
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Market Demand -->
+                        <details class="config-section">
+                            <summary style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #edf2f7;">
+                                MARKET DEMAND</summary>
+                            <div class="section-content" style="padding-top: 8px;">
+                                <div class="param-group" data-info="Base chance for GREEN plots (Parks) to spawn.">
+                                    <div class="param-header">
+                                        <label>Green Space</label>
+                                        <span id="greenSpawnRateValue">1%</span>
+                                    </div>
+                                    <input type="range" id="greenSpawnRate" min="0" max="50" step="1" value="1"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group" data-info="Base chance for FARMING plots to spawn.">
+                                    <div class="param-header">
+                                        <label>Agriculture</label>
+                                        <span id="farmingSpawnRateValue">1%</span>
+                                    </div>
+                                    <input type="range" id="farmingSpawnRate" min="0" max="50" step="1" value="1"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group" data-info="Base chance for SPORT plots to spawn.">
+                                    <div class="param-header">
+                                        <label>Sports</label>
+                                        <span id="sportSpawnRateValue">1%</span>
+                                    </div>
+                                    <input type="range" id="sportSpawnRate" min="0" max="50" step="1" value="1"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group" data-info="Base chance for WORKSHOP plots to spawn.">
+                                    <div class="param-header">
+                                        <label>Production</label>
+                                        <span id="workshopSpawnRateValue">1%</span>
+                                    </div>
+                                    <input type="range" id="workshopSpawnRate" min="0" max="50" step="1" value="1"
+                                        class="slider">
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Simulation Constants -->
+                        <details class="config-section">
+                            <summary style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #edf2f7;">
+                                SIMULATION CONSTANTS</summary>
+                            <div class="section-content" style="padding-top: 8px;">
+                                <div class="param-group" data-info="Duration of each simulation cycle in milliseconds.">
+                                    <div class="param-header">
+                                        <label>Time Scale (ms)</label>
+                                        <span id="tickSpeedValue">1000</span>
+                                    </div>
+                                    <input type="range" id="tickSpeed" min="0" max="9" step="1" value="3"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Factor determining how strictly development adheres to designated zones.">
+                                    <div class="param-header">
+                                        <label>Zoning Compliance</label>
+                                        <span id="zoneInfluenceValue">0.20</span>
+                                    </div>
+                                    <input type="range" id="zoneInfluence" min="0" max="50" value="20" class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Benefit derived from proximity to compatible functions.">
+                                    <div class="param-header">
+                                        <label>Proximity Bonus</label>
+                                        <span id="synergyBonusValue">0.10</span>
+                                    </div>
+                                    <input type="range" id="synergyBonus" min="0" max="30" value="10" class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Probability increase for Industrial development near infrastructure.">
+                                    <div class="param-header">
+                                        <label>Infrastructure Weight</label>
+                                        <span id="roadBonusValue">0.10</span>
+                                    </div>
+                                    <input type="range" id="roadBonus" min="0" max="50" value="10" class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Probability of a building becoming vacant or obsolete per cycle.">
+                                    <div class="param-header">
+                                        <label>Attrition Rate</label>
+                                        <span id="decayChanceValue">0.03</span>
+                                    </div>
+                                    <input type="range" id="decayChance" min="0" max="10" value="3" class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Years before a building's suitability is re-checked.">
+                                    <div class="param-header">
+                                        <label>Maturity Age (Years)</label>
+                                        <span id="reEvaluationAgeValue">10</span>
+                                    </div>
+                                    <input type="range" id="reEvaluationAge" min="1" max="20" value="10" class="slider">
+                                </div>
+
+                                <div class="param-group" data-info="Minimum age for a Farm plot to consider merging.">
+                                    <div class="param-header">
+                                        <label>Merge Age</label>
+                                        <span id="farmingMergeAgeValue">5</span>
+                                    </div>
+                                    <input type="range" id="farmingMergeAge" min="1" max="50" value="5" class="slider">
+                                </div>
+
+                                <div class="param-group" data-info="Chance per tick for eligible plots to merge.">
+                                    <div class="param-header">
+                                        <label>Merge Chance</label>
+                                        <span id="farmingMergeChanceValue">1%</span>
+                                    </div>
+                                    <input type="range" id="farmingMergeChance" min="0" max="100" value="1"
+                                        class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Chance for a new plot to create a door on adjacent existing building.">
+                                    <div class="param-header">
+                                        <label>Door Chance</label>
+                                        <span id="doorChanceValue">25%</span>
+                                    </div>
+                                    <input type="range" id="doorChance" min="0" max="100" value="25" class="slider">
+                                </div>
+
+                                <div class="param-group"
+                                    data-info="Chance per tick for an eligible existing building to spawn a roof garden.">
+                                    <div class="param-header">
+                                        <label>Topping Chance</label>
+                                        <span id="toppingChanceValue">1%</span>
+                                    </div>
+                                    <input type="range" id="toppingChance" min="0" max="100" value="1" class="slider">
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Context Layer -->
+                        <details class="config-section">
+                            <summary style="margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #edf2f7;">
+                                CONTEXT LAYER</summary>
+                            <div class="section-content" style="padding-top: 8px;">
+                                <input type="file" id="imageUpload" accept="image/*" class="file-input"
+                                    data-info="Upload an image to use as an underlay for the simulation.">
+
+                                <div class="param-group compact"
+                                    data-info="Adjust the transparency of the background image.">
+                                    <div class="param-header">
+                                        <label>Opacity</label>
+                                        <span id="imageOpacityValue">0.50</span>
+                                    </div>
+                                    <input type="range" id="imageOpacity" min="0" max="100" value="50" class="slider">
+                                </div>
+                                <div class="param-group compact"
+                                    data-info="Offset the background image position (X / Y).">
+                                    <div class="param-header">
+                                        <label>Position X/Y</label>
+                                        <div><span id="imageOffsetXValue">0</span> / <span
+                                                id="imageOffsetYValue">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="dual-inputs">
+                                        <input type="range" id="imageOffsetX" min="-500" max="500" value="0"
+                                            class="slider">
+                                        <input type="range" id="imageOffsetY" min="-500" max="500" value="0"
+                                            class="slider">
+                                    </div>
+                                </div>
+                                <div class="param-group compact" data-info="Scale the background image size (X / Y).">
+                                    <div class="param-header">
+                                        <label>Scale X/Y</label>
+                                        <div><span id="imageScaleXValue">1.00</span> / <span
+                                                id="imageScaleYValue">1.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="dual-inputs">
+                                        <input type="range" id="imageScaleX" min="10" max="200" value="100"
+                                            class="slider">
+                                        <input type="range" id="imageScaleY" min="10" max="200" value="100"
+                                            class="slider">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+
+                    </div>
+
+            </aside>
+
+        </div>
+    </div>
+
+    <div id="year-progress-container"
+        style="position: fixed; bottom: 0; left: 0; width: 100%; height: 4px; background: #000; z-index: 2147483647; pointer-events: none;">
+        <div id="year-progress-bar"
+            style="width: 1%; height: 100%; background: #48BB78; transition: width 0.1s linear;"></div>
+    </div>
+
+    <div id="floating-tooltip" class="floating-tooltip"></div>
+
+    <!-- MAIN MODAL CONTAINER -->
+    <div id="app-modal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">User Manual</div>
+                <button class="modal-close" id="modal-close-btn">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Content Injected Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PixiJS v7 (Local) -->
+    <script src="pixi.min.js"></script>
+    <script>
+        // Critical Fix: pixi-viewport UMD expects 'pixi_js', but PixiJS exposes 'PIXI'
+        window.pixi_js = window.PIXI;
+    </script>
+    <script src="viewport.js"></script>
+    <script>
+        // Compatibility Shim: Locate the Viewport constructor
+        if (typeof pixi_viewport === 'undefined') {
+            window.pixi_viewport = {};
+        }
+
+        // Helper to find the correct class
+        function findViewportClass() {
+            // 1. Check if it attached to pixi_viewport global (Standard UMD behavior now that pixi_js alias works)
+            if (window.pixi_viewport && window.pixi_viewport.Viewport) {
+                return window.pixi_viewport.Viewport;
+            }
+            // 2. Check if it attached to PIXI namespace
+            if (typeof PIXI !== 'undefined' && PIXI.Viewport) {
+                return PIXI.Viewport;
+            }
+            // 3. Fallback check for global Viewport class (if not native)
+            if (typeof Viewport === 'function' && Viewport.prototype && Viewport.prototype.drag) {
+                return Viewport;
+            }
+            return null;
+        }
+
+        const ViewportClass = findViewportClass();
+        if (ViewportClass) {
+            window.pixi_viewport.Viewport = ViewportClass;
+            console.log("Pixi-Viewport shim: Found constructor", ViewportClass);
+        } else {
+            console.error("Pixi-Viewport shim: Could not find Viewport constructor!");
+        }
+    </script>
+
+    <!-- EMERGENCY STYLE OVERRIDE FOR START BUTTON -->
+    <style>
+        /* Force Start Button Hover State */
+        #mode-toggle {
+            border: 1px solid transparent !important;
+            /* Reserve space for border */
+        }
+
+        #mode-toggle:hover {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+            border: 1px solid #000000 !important;
+        }
+
+        /* Ensure text children are also black */
+        #mode-toggle:hover * {
+            color: #000000 !important;
+        }
+    </style>
+    <div id="inspector-card" class="inspector-card" style="display: none;">
+        <div class="inspector-header">
+            <span id="inspector-title">Plot Info</span>
+            <button id="close-inspector" class="close-btn">×</button>
+        </div>
+        <div class="inspector-content" id="inspector-content">
+            <!-- Content will be injected here -->
+        </div>
+    </div>
+
+    <style>
+        .inspector-card {
+            position: fixed;
+            background: white;
+            border: 1px solid black;
+            border-radius: 0;
+            padding: 12px;
+            width: 280px;
+            z-index: 5000;
+            /* On top of everything */
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            font-family: 'Inter', sans-serif;
+            pointer-events: auto;
+        }
+
+        .dark-mode .inspector-card {
+            background: #2D3748;
+            border-color: #A0AEC0;
+            color: #E2E8F0;
+        }
+
+        .inspector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 8px;
+        }
+
+        .dark-mode .inspector-header {
+            border-color: #4A5568;
+        }
+
+        #inspector-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0 4px;
+            color: #718096;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        .inspector-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .inspector-label {
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .dark-mode .inspector-label {
+            color: #A0AEC0;
+        }
+
+        .inspector-value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .inspector-section {
+            margin-top: 10px;
+            padding-top: 6px;
+            border-top: 1px dashed #E2E8F0;
+        }
+
+        .dark-mode .inspector-section {
+            border-color: #4A5568;
+        }
+
+        .inspector-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #A0AEC0;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+    </style>
+    <script src="drawing_helpers.js?v=expo1"></script>
+    <script src="expo_layout.js?v=expo1"></script>
+    <script src="script.js?v=expo1"></script>
+</body>
+
+</html>
